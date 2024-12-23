@@ -449,3 +449,37 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
     return -1;
   }
 }
+
+// Recursive going through pagetable
+void
+vmprint_recursive(pagetable_t pagetable, int level){
+  for(int i = 0; i < 512; i++){
+    pte_t pte = pagetable[i]; // Get pagetable index at index i
+
+    if (pte & PTE_V){ // Check if valid
+      uint64 pa = PTE2PA(pte); // Get physical address from PTE
+
+      // Print ' ..' for level
+      for(int j = 0; j < level; j++){
+        printf(" ..");
+      }
+
+      // Print info
+      printf("%d: pte %p pa %p\n", i, pte, pa);
+
+      // If current is not a leaf pagetable (not have permission to Read, Write, Execute)
+      //if((pte & PTE_V) && (pte & (PTE_R|PTE_W|PTE_X)) == 0){
+      if((pte & (PTE_R|PTE_W|PTE_X)) == 0){ 
+        pagetable_t pagetable_next = (pagetable_t)PTE2PA(pte); // Get next pagetable
+        vmprint_recursive(pagetable_next, level + 1);
+      }
+    }
+  }
+}
+
+// Prints the contents of a page table.
+void 
+vmprint(pagetable_t pagetable){
+  printf("page table %p\n", pagetable); // Print first pagetable address
+  vmprint_recursive(pagetable, 1);
+}
