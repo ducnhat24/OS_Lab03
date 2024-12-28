@@ -1,0 +1,61 @@
+Speed up system calls
+
+    Which other xv6 system call(s) could be made faster using this shared page? Explain how.
+
+    Answer: pipe, read, write, fork, exec,... Because:
+        1. pipe:
+        Why: The pipe system call involves copying data between processes via kernel buffers.
+        How: Using a shared page as the buffer allows both processes (reader and writer) to directly read/write without additional kernel copying, reducing overhead.
+        2. read and write:
+        Why: These system calls involve transferring data between user space and kernel space, which requires copying.
+        How: A shared page can be mapped as a buffer, enabling direct data access by both the application and the kernel, reducing data copying operations.
+        3. fork:
+        Why: The fork system call duplicates the memory space of the parent process for the child, which can be resource-intensive.
+        How: Shared pages can hold data that doesn't need to be copied (e.g., shared state or read-only data), reducing duplication and memory allocation overhead.
+        4. exec:
+        Why: The exec system call replaces the process memory image by loading a new program from disk, requiring temporary buffers for the program's binary and arguments.
+        How: Using the shared page as a buffer can speed up the loading process by avoiding kernel-managed memory allocation for temporary storage.
+
+
+Print a page table
+
+    For every leaf page in the vmprint output, explain what it logically contains
+    and what its permission bits are. Figure 3.4 in the xv6 book might be helpful, 
+    although note that the figure might have a slightly different set of pages than
+    the init process that's being inspected here.
+
+    Answer: Printing the Page Table
+        vmprint outputs each leaf page in the page table, showing:
+        Virtual address (VA).
+        Physical address (PA).
+        Permission bits (R, W, X).
+        
+        Logical Content of Leaf Pages
+        Kernel Code/Data: Kernel instructions and static data.
+
+        Permissions: R = Yes, W = No, X = Yes.
+        User Code: Executable program instructions.
+
+        Permissions: R = Yes, W = No, X = Yes.
+        User Data: Global variables, heap, writable sections.
+
+        Permissions: R = Yes, W = Yes, X = No.
+        User Stack: Function call stack.
+
+        Permissions: R = Yes, W = Yes, X = No.
+        Shared Pages (if used): For inter-process communication.
+
+        Permissions: Configurable (R/W based on purpose, X = No).
+        Kernel Mappings: Device memory or reserved areas.
+
+        Permissions: R = Yes, W = Yes, X = No.
+        Permission Overview
+        R (Readable): Access allowed for reading.
+        W (Writable): Access allowed for writing.
+        X (Executable): Access allowed for execution.
+
+
+
+
+
+

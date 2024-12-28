@@ -70,12 +70,30 @@ sys_sleep(void)
 }
 
 
+// #ifdef LAB_PGTBL
+// int
+// sys_pgaccess(void)
+// {
+//   // lab pgtbl: your code here.
+//   return 0;
+// }
+// #endif
 #ifdef LAB_PGTBL
+#define MAXLEN 4096
+
 int
-sys_pgaccess(void)
-{
-  // lab pgtbl: your code here.
-  return 0;
+sys_pgaccess(void) {
+  uint64 base, mask;
+  int len;
+
+  argaddr(0, &base);
+  argint(1, &len);
+  argaddr(2, &mask);
+
+  if (len <= 0 || len > MAXLEN)
+    return -1;
+
+  return pgaccess(base, len, mask);
 }
 #endif
 
