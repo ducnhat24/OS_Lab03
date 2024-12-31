@@ -25,37 +25,57 @@ Print a page table
     the init process that's being inspected here.
 
     Answer: Printing the Page Table
-        vmprint outputs each leaf page in the page table, showing:
-        Virtual address (VA).
-        Physical address (PA).
-        Permission bits (R, W, X).
+        page table 0x0000000087f6b000
+        ..0: pte 0x0000000021fd9c01 pa 0x0000000087f67000
+        .. ..0: pte 0x0000000021fd9801 pa 0x0000000087f66000
+        .. .. ..0: pte 0x0000000021fda01b pa 0x0000000087f68000
+        .. .. ..1: pte 0x0000000021fd9417 pa 0x0000000087f65000
+        .. .. ..2: pte 0x0000000021fd9007 pa 0x0000000087f64000
+        .. .. ..3: pte 0x0000000021fd8c17 pa 0x0000000087f63000
+        ..255: pte 0x0000000021fda801 pa 0x0000000087f6a000
+        .. ..511: pte 0x0000000021fda401 pa 0x0000000087f69000
+        .. .. ..509: pte 0x0000000021fdcc13 pa 0x0000000087f73000
+        .. .. ..510: pte 0x0000000021fdd007 pa 0x0000000087f74000
+        .. .. ..511: pte 0x0000000020001c0b pa 0x0000000080007000
         
-        Logical Content of Leaf Pages
-        Kernel Code/Data: Kernel instructions and static data.
-
-        Permissions: R = Yes, W = No, X = Yes.
-        User Code: Executable program instructions.
-
-        Permissions: R = Yes, W = No, X = Yes.
-        User Data: Global variables, heap, writable sections.
-
-        Permissions: R = Yes, W = Yes, X = No.
-        User Stack: Function call stack.
-
-        Permissions: R = Yes, W = Yes, X = No.
-        Shared Pages (if used): For inter-process communication.
-
-        Permissions: Configurable (R/W based on purpose, X = No).
-        Kernel Mappings: Device memory or reserved areas.
-
-        Permissions: R = Yes, W = Yes, X = No.
-        Permission Overview
-        R (Readable): Access allowed for reading.
-        W (Writable): Access allowed for writing.
-        X (Executable): Access allowed for execution.
-
-
-
-
-
-
+        leaf page 1: pte 0x0000000021fda01b pa 0x0000000087f68000
+            Binary: 0000000000000000000000000000000000100001111111011010000000011011
+            - PTE_V (Valid page)
+            - PTE_R (Readable)
+            - PTE_X (Executable)
+            Logical Contents: This page likely contains executable code (e.g., instructions of a program) since it is both readable and executable.
+        leaf page 2: pte 0x0000000021fd9417 pa 0x0000000087f65000
+            Binary: 0000000000000000000000000000000000100001111111011001010000010111
+            - PTE_V (Valid page)
+            - PTE_R (Readable)
+            - PTE_W (Writable)
+            Logical Contents: This page contains writable data, such as variables or buffers used by the program.
+        leaf page 3: pte 0x0000000021fd9007 pa 0x0000000087f64000
+            Binary: 0000000000000000000000000000000000100001111111011001000000000111
+            - PTE_V (Valid page)
+            - PTE_R (Readable)
+            - PTE_W (Writable)
+            Logical Contents: Similar to Leaf Page 2, this page contains writable data such as global variables or heap allocations.
+        leaf page 4: pte 0x0000000021fd8c17 pa 0x0000000087f63000
+            Binary: 0000000000000000000000000000000000100001111111011000110000010111
+            - PTE_V (Valid page)
+            - PTE_R (Readable)
+            - PTE_W (Writable)
+            Logical Contents: Contains writable data, possibly stack or heap memory, used for dynamic allocations or runtime data.
+        leaf page 5: pte 0x0000000021fdcc13 pa 0x0000000087f73000
+            Binary: 0000000000000000000000000000000000100001111111011100110000010011
+            - PTE_V (Valid page)
+            - PTE_R (Readable)
+            Logical Contents: This page is read-only and might store static or constant data, such as string literals or read-only global variables.
+        leaf page 6: pte 0x0000000021fdd007 pa 0x0000000087f74000
+            Binary: 0000000000000000000000000000000000100001111111011101000000000111
+            - PTE_V (Valid page)
+            - PTE_R (Readable)
+            - PTE_W (Writable)
+            Logical Contents: Writable data, potentially similar to pages 2-4, used for dynamic memory, variables, or buffers.
+        leaf page 7: pte 0x0000000020001c0b pa 0x0000000080007000
+            Binary: 0000000000000000000000000000000000100000000000000001110000001011
+            - PTE_V (Valid page)
+            - PTE_R (Readable)
+            - PTE_X (Executable)
+            Logical Contents: Executable code, such as the program's instructions or dynamically generated code.
