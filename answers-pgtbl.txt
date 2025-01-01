@@ -16,6 +16,8 @@ Speed up system calls
         Why: The exec system call replaces the process memory image by loading a new program from disk, requiring temporary buffers for the program's binary and arguments.
         How: Using the shared page as a buffer can speed up the loading process by avoiding kernel-managed memory allocation for temporary storage.
 
+        If we add other parameters to this USYCALL shared page, the reading functions like uptime(), getuid(), getgid() will benefit because like getpid(), the above functions can read the results in this shared page.
+
 
 Print a page table
 
